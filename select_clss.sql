@@ -342,3 +342,34 @@ SELECT DATE_FORMAT(date(NOW()),"%j");
 
 SELECT * FROM emp ORDER BY comm;
 
+SELECT DATE_FORMAT(curdate(),'%D'); -- add TH to day portion  17th,18th
+
+SELECT ename,hiredate from emp where DAYNAME(`HIREDATE`) = "Thursday" and day(`HIREDATE`) < 7 ; 
+SELECT ename,hiredate from emp where DAYNAME(`HIREDATE`) = "Thursday" and DATE_FORMAT(`HIREDATE`,'%d') < 7 ; 
+
+SELECT ename,hiredate, day(hiredate), DAYNAME(hiredate),DATE_FORMAT(hiredate,'%d') from emp;
+
+SELECT ename,hiredate, CONCAT(DATE_FORMAT(hiredate,'%D')," ",DAYNAME(hiredate)," ",MONTH(hiredate)," ",YEAR(hiredate)) from emp;
+SELECT ename,hiredate, DATE_FORMAT(hiredate,'%d') from emp;
+
+-- extract
+SELECT EXTRACT(year from hiredate), EXTRACT(month from hiredate), EXTRACT(day from hiredate) FROM emp;
+
+-- returning differences
+
+SELECT DATEDIFF(CURDATE(),hiredate), hiredate from emp;
+
+SELECT TIMESTAMPDIFF(year,hiredate,CURDATE()), hiredate from emp;
+SELECT TIMESTAMPDIFF(MONTH,hiredate,CURDATE()), hiredate from emp;
+SELECT TIMESTAMPDIFF(DAY,hiredate,CURDATE()), hiredate, CURDATE() from emp;
+
+SELECT TIMESTAMPDIFF(YEAR,"1999-08-02",CURDATE()) 'year', mod(TIMESTAMPDIFF(MONTH,"1999-08-02",CURDATE()),12) 'months', mod(TIMESTAMPDIFF(DAY,"1999-08-02",CURDATE()),31) 'days';
+-- modifying dates 
+SELECT DATE_ADD(CURDATE(), INTERVAL '1' YEAR) "add 1 year", DATE_SUB(CURDATE(),INTERVAL '2' YEAR) 'sub 2 years';
+
+SELECT last_day(CURDATE());
+SELECT last_day('1999-08-02');
+SELECT MAKEDATE(2022,4);
+SELECT MAKEDATE(2022,123);
+SELECT MAKEDATE(2022,434);
+
