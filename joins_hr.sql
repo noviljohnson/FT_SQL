@@ -29,8 +29,13 @@ desc employees;
 SELECT e.first_name,e.last_name,m.first_name from employees e INNER JOIN employees m on e.manager_id=m.employee_id ORDER BY e.last_name;
 SELECT e.first_name,e.last_name,m.first_name from employees e LEFT OUTER JOIN employees m on e.manager_id=m.employee_id ORDER BY m.first_name;
 
+-- same salary
+SELECT CONCAT(e.first_name,e.last_name),e.salary --m.first_name,m.salary, 
+from employees e inner JOIN employees m on  e.employee_id != m.employee_id and e.salary=m.salary
+GROUP BY e.salary,CONCAT(e.first_name,e.last_name);
+HAVING COUNT(*) > 1;
 
--- SELECT e.first_name,m.first_name,m.salary,e.salary from employees e JOIN employees m on e.salary=m.salary and e.employee_id != m.employee_id ;
+
 
 SELECT CONCAT(first_name,last_name), salary from employees
 WHERE salary in(SELECT salary from employees
@@ -38,7 +43,14 @@ WHERE salary in(SELECT salary from employees
                 HAVING COUNT(employee_id) > 1);
 
 
-SELECT * FROM employees;
+
+SELECT CONCAT(e.first_name,e.last_name), e.salary 
+FROM employees e, employees m
+WHERE e.employee_id != m.employee_id and e.salary=m.salary
+GROUP BY e.salary, CONCAT(e.first_name,e.last_name);
+HAVING COUNT(*) > 1;
+
+
 
 
 

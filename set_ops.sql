@@ -132,4 +132,23 @@ values ("A",1000,2999),
 SELECT e.job,e.`ENAME` from emp e WHERE QUARTER(hiredate) >2 and job in (
         SELECT m.job FROM emp m WHERE QUARTER(m.hiredate) < 3 and YEAR(m.hiredate) = YEAR(e.hiredate)+1 );
 SELECT * from emp;
-SELECT e.job,e.`ENAME`,YEAR(`HIREDATE`) from emp e WHERE QUARTER(hiredate) > 2;
+
+
+--  same `SAL`
+SELECT DISTINCT(sal) from emp;
+
+SELECT e.ename, e.sal 
+FROM emp e, emp m
+WHERE e.empno != m.empno and e.sal=m.sal
+GROUP BY e.sal,e.`ENAME`;
+HAVING COUNT(*) > 1;
+
+
+SELECT *
+FROM emp e INNER JOIN emp m on e.`EMPNO` != m.`EMPNO` and e.sal = m.`SAL`;
+WHERE e.empno != m.empno and e.sal=m.sal;
+
+SELECT ename, sal from emp
+WHERE sal in (SELECT sal from emp
+                GROUP BY sal
+                HAVING COUNT(empno) > 1);
