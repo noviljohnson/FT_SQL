@@ -44,10 +44,10 @@ WHERE salary in(SELECT salary from employees
 
 
 
-SELECT CONCAT(e.first_name,e.last_name), e.salary 
+SELECT  e.salary , CONCAT(e.first_name,e.last_name)
 FROM employees e, employees m
 WHERE e.employee_id != m.employee_id and e.salary=m.salary
-GROUP BY e.salary, CONCAT(e.first_name,e.last_name);
+GROUP BY CONCAT(e.first_name,e.last_name), e.salary;
 HAVING COUNT(*) > 1;
 
 
