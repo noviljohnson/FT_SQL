@@ -1,0 +1,894 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| case1              |
+| hr                 |
+| information_schema |
+| mysql              |
+| newdb1             |
+| newtestdb          |
+| performance_schema |
+| sakila             |
+| sys                |
+| test               |
+| world              |
++--------------------+
+11 rows in set (0.00 sec)
+
+mysql> use newtestdb;
+Database changed
+mysql> show tables;
++---------------------+
+| Tables_in_newtestdb |
++---------------------+
+| company_new         |
+| default_tab         |
+| dept                |
+| emp                 |
+| emp1                |
+| salgrade            |
+| stud_address_view   |
+| stud_age_view       |
+| student             |
+| student_phone       |
++---------------------+
+10 rows in set (0.01 sec)
+
+mysql> select curdate(),now();
++------------+---------------------+
+| curdate()  | now()               |
++------------+---------------------+
+| 2022-12-28 | 2022-12-28 14:14:46 |
++------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> select date_format(curdate(),'%D');
++-----------------------------+
+| date_format(curdate(),'%D') |
++-----------------------------+
+| 28th                        |
++-----------------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> 
+mysql> select HIREDATE,date_format(HIREDDATE,'%D') FROM EMP;
+ERROR 1054 (42S22): Unknown column 'HIREDDATE' in 'field list'
+mysql> select HIREDATE,date_format(HIREDATE,'%D') FROM EMP;
++------------+----------------------------+
+| HIREDATE   | date_format(HIREDATE,'%D') |
++------------+----------------------------+
+| 1980-12-17 | 17th                       |
+| 1981-02-20 | 20th                       |
+| 1981-02-22 | 22nd                       |
+| 1981-04-02 | 2nd                        |
+| 1981-09-28 | 28th                       |
+| 1981-05-01 | 1st                        |
+| 1981-06-09 | 9th                        |
+| 1987-07-13 | 13th                       |
+| 1981-11-17 | 17th                       |
+| 1981-09-08 | 8th                        |
+| 1987-07-13 | 13th                       |
+| 1981-12-03 | 3rd                        |
+| 1981-12-03 | 3rd                        |
+| 1982-01-23 | 23rd                       |
++------------+----------------------------+
+14 rows in set (0.00 sec)
+
+mysql> SELECT ENAME,HIREDATE,DAYNAME(HIREDATE)
+    -> FROM   EMP
+    -> WHERE  DAYNAME(HIREDATE)='Thursday'
+    -> AND DATE_FORMAT(HIREDATE,'%d') between 1 and 7;
++-------+------------+-------------------+
+| ENAME | HIREDATE   | DAYNAME(HIREDATE) |
++-------+------------+-------------------+
+| JONES | 1981-04-02 | Thursday          |
+| JAMES | 1981-12-03 | Thursday          |
+| FORD  | 1981-12-03 | Thursday          |
++-------+------------+-------------------+
+3 rows in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> select ename,hiredate,concat(date_format(hiredate,'%D'),dayname(hiredate),monthname(hiredate),
+    -> year(hiredate)) "NEWFORMAT"
+    -> from emp;
++--------+------------+---------------------------+
+| ename  | hiredate   | NEWFORMAT                 |
++--------+------------+---------------------------+
+| SMITH  | 1980-12-17 | 17thWednesdayDecember1980 |
+| ALLEN  | 1981-02-20 | 20thFridayFebruary1981    |
+| WARD   | 1981-02-22 | 22ndSundayFebruary1981    |
+| JONES  | 1981-04-02 | 2ndThursdayApril1981      |
+| MARTIN | 1981-09-28 | 28thMondaySeptember1981   |
+| BLAKE  | 1981-05-01 | 1stFridayMay1981          |
+| CLARK  | 1981-06-09 | 9thTuesdayJune1981        |
+| SCOTT  | 1987-07-13 | 13thMondayJuly1987        |
+| KING   | 1981-11-17 | 17thTuesdayNovember1981   |
+| TURNER | 1981-09-08 | 8thTuesdaySeptember1981   |
+| ADAMS  | 1987-07-13 | 13thMondayJuly1987        |
+| JAMES  | 1981-12-03 | 3rdThursdayDecember1981   |
+| FORD   | 1981-12-03 | 3rdThursdayDecember1981   |
+| MILLER | 1982-01-23 | 23rdSaturdayJanuary1982   |
++--------+------------+---------------------------+
+14 rows in set (0.00 sec)
+
+mysql> select ename,hiredate,concat(ename," joined on ",date_format(hiredate,'%D')," ",dayname(hiredate)," ",monthname(hiredate),
+    -> " ",year(hiredate)) "NEWFORMAT"
+    -> from emp;
++--------+------------+----------------------------------------------+
+| ename  | hiredate   | NEWFORMAT                                    |
++--------+------------+----------------------------------------------+
+| SMITH  | 1980-12-17 | SMITH joined on 17th Wednesday December 1980 |
+| ALLEN  | 1981-02-20 | ALLEN joined on 20th Friday February 1981    |
+| WARD   | 1981-02-22 | WARD joined on 22nd Sunday February 1981     |
+| JONES  | 1981-04-02 | JONES joined on 2nd Thursday April 1981      |
+| MARTIN | 1981-09-28 | MARTIN joined on 28th Monday September 1981  |
+| BLAKE  | 1981-05-01 | BLAKE joined on 1st Friday May 1981          |
+| CLARK  | 1981-06-09 | CLARK joined on 9th Tuesday June 1981        |
+| SCOTT  | 1987-07-13 | SCOTT joined on 13th Monday July 1987        |
+| KING   | 1981-11-17 | KING joined on 17th Tuesday November 1981    |
+| TURNER | 1981-09-08 | TURNER joined on 8th Tuesday September 1981  |
+| ADAMS  | 1987-07-13 | ADAMS joined on 13th Monday July 1987        |
+| JAMES  | 1981-12-03 | JAMES joined on 3rd Thursday December 1981   |
+| FORD   | 1981-12-03 | FORD joined on 3rd Thursday December 1981    |
+| MILLER | 1982-01-23 | MILLER joined on 23rd Saturday January 1982  |
++--------+------------+----------------------------------------------+
+14 rows in set (0.00 sec)
+
+mysql> select extract(year from curdate()),extract(month from curdate()),
+    -> extract(day from curdate());
++------------------------------+-------------------------------+-----------------------------+
+| extract(year from curdate()) | extract(month from curdate()) | extract(day from curdate()) |
++------------------------------+-------------------------------+-----------------------------+
+|                         2022 |                            12 |                          28 |
++------------------------------+-------------------------------+-----------------------------+
+1 row in set (0.00 sec)
+
+mysql> \! CLS;
+mysql> SELECT * FROM STUDENT;
++-----+-------+------------+----------+-----------+---------+
+| ID  | NAME  | DOB        | STREET   | CITY      | PINCODE |
++-----+-------+------------+----------+-----------+---------+
+| 101 | RAHUL | 2000-10-12 | 1st main | Bangalore |  560010 |
+| 102 | MUKUL | 2000-05-22 | NULL     | NULL      |    NULL |
++-----+-------+------------+----------+-----------+---------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT DATEDIFF(DOB,CURDATE()) "difference" FROM STUDENT;
++------------+
+| difference |
++------------+
+|      -8112 |
+|      -8255 |
++------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT DATEDIFF(CURDATE(),DOB) "difference" FROM STUDENT;
++------------+
+| difference |
++------------+
+|       8112 |
+|       8255 |
++------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT TIMESTAMPDIFF(YEAR,CURDATE(),DOB) "yeardiff" FROM STUDENT;
++----------+
+| yeardiff |
++----------+
+|      -22 |
+|      -22 |
++----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT TIMESTAMPDIFF(YEAR,DOB,CURDATE()) "yeardiff" FROM STUDENT;
++----------+
+| yeardiff |
++----------+
+|       22 |
+|       22 |
++----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT TIMESTAMPDIFF(MONTH,DOB,CURDATE()) "monthdiff" FROM STUDENT;
++-----------+
+| monthdiff |
++-----------+
+|       266 |
+|       271 |
++-----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT TIMESTAMPDIFF(day,DOB,CURDATE()) "daydiff" FROM STUDENT;
++---------+
+| daydiff |
++---------+
+|    8112 |
+|    8255 |
++---------+
+2 rows in set (0.00 sec)
+
+mysql> 
+mysql> #display how many years,months old are you.
+mysql> select day(curdate())-date_format(@v1,"%d")
+    -> ^C
+mysql> set @dob="1969-01-05";
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select day(curdate())-date_format(@dob,"%d");
++---------------------------------------+
+| day(curdate())-date_format(@dob,"%d") |
++---------------------------------------+
+|                                    23 |
++---------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select timestampdiff(year,@dob,curdate()) "years", mod(timestampdiff(year,@dob,curdate()) day(curdate())-date_format(@dob,"%d") "days";
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'day(curdate())-date_format(@dob,"%d") "days"' at line 1
+mysql> select timestampdiff(year,@dob,curdate()) "years", mod(timestampdiff(year,dob,curdate()),12) "months",
+    -> day(curdate())-date_format(@dob,"%d") "days";
+ERROR 1054 (42S22): Unknown column 'dob' in 'field list'
+mysql> set @dob="1969-01-05";
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select timestampdiff(year,@dob,curdate()) "years", mod(timestampdiff(year,@dob,curdate()),12), day(curdate())-date_format(@dob,"%d") "days";
++-------+--------------------------------------------+------+
+| years | mod(timestampdiff(year,@dob,curdate()),12) | days |
++-------+--------------------------------------------+------+
+|    53 |                                          5 |   23 |
++-------+--------------------------------------------+------+
+1 row in set (0.00 sec)
+
+mysql> select timestampdiff(year,@dob,curdate()) "years", mod(timestampdiff(year,@dob,curdate()),12) "MONTHS", day(curdate())-date_format(@dob,"%d") "days";
++-------+--------+------+
+| years | MONTHS | days |
++-------+--------+------+
+|    53 |      5 |   23 |
++-------+--------+------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> SELECT DATE_ADD(CURDATE(),INTERVAL '1' YEAR') "ADD1YEAR",DATE_SUB(CURDATE(),INTERVAL '2' YEAR) "DEDUCT1YEAR";
+    '> ^C
+mysql> 
+mysql> SELECT DATE_ADD(CURDATE(),INTERVAL '1' YEAR) "ADD1YEAR",DATE_SUB(CURDATE(),INTERVAL '2' YEAR) "DEDUCT1YEAR";
++------------+-------------+
+| ADD1YEAR   | DEDUCT1YEAR |
++------------+-------------+
+| 2023-12-28 | 2020-12-28  |
++------------+-------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> 
+mysql> SELECT DATE_ADD(CURDATE(),INTERVAL '1' MONTH) "ADD1MONTH",DATE_SUB(CURDATE(),INTERVAL '2' MONTH) "DEDUCT2MONTH";
++------------+--------------+
+| ADD1MONTH  | DEDUCT2MONTH |
++------------+--------------+
+| 2023-01-28 | 2022-10-28   |
++------------+--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT DATE_ADD(CURDATE(),INTERVAL '1' DAY) "ADD1DAY",DATE_SUB(CURDATE(),INTERVAL '2' DAY) "DEDUCT2DAY";
++------------+------------+
+| ADD1DAY    | DEDUCT2DAY |
++------------+------------+
+| 2022-12-29 | 2022-12-26 |
++------------+------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT LAST_DAY(CURDATE());
++---------------------+
+| LAST_DAY(CURDATE()) |
++---------------------+
+| 2022-12-31          |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> SELECT ENAME,HIREDATE,LAST_DAY(HIREDATE) FROM EMP;
++--------+------------+--------------------+
+| ENAME  | HIREDATE   | LAST_DAY(HIREDATE) |
++--------+------------+--------------------+
+| SMITH  | 1980-12-17 | 1980-12-31         |
+| ALLEN  | 1981-02-20 | 1981-02-28         |
+| WARD   | 1981-02-22 | 1981-02-28         |
+| JONES  | 1981-04-02 | 1981-04-30         |
+| MARTIN | 1981-09-28 | 1981-09-30         |
+| BLAKE  | 1981-05-01 | 1981-05-31         |
+| CLARK  | 1981-06-09 | 1981-06-30         |
+| SCOTT  | 1987-07-13 | 1987-07-31         |
+| KING   | 1981-11-17 | 1981-11-30         |
+| TURNER | 1981-09-08 | 1981-09-30         |
+| ADAMS  | 1987-07-13 | 1987-07-31         |
+| JAMES  | 1981-12-03 | 1981-12-31         |
+| FORD   | 1981-12-03 | 1981-12-31         |
+| MILLER | 1982-01-23 | 1982-01-31         |
++--------+------------+--------------------+
+14 rows in set (0.00 sec)
+
+mysql> SELECT MAKEDATE(2017,1),MAKEDATE(2020,55);
++------------------+-------------------+
+| MAKEDATE(2017,1) | MAKEDATE(2020,55) |
++------------------+-------------------+
+| 2017-01-01       | 2020-02-24        |
++------------------+-------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> \! CLS;
+mysql> SELECT  ENAME,SAL,IF(SAL>3000,"GOODSAL","LOWSAL") "comments"
+    -> FROM EMP;
++--------+------+----------+
+| ENAME  | SAL  | comments |
++--------+------+----------+
+| SMITH  |  800 | LOWSAL   |
+| ALLEN  | 1600 | LOWSAL   |
+| WARD   | 1250 | LOWSAL   |
+| JONES  | 2975 | LOWSAL   |
+| MARTIN | 1250 | LOWSAL   |
+| BLAKE  | 2850 | LOWSAL   |
+| CLARK  | 2450 | LOWSAL   |
+| SCOTT  | 3000 | LOWSAL   |
+| KING   | 5000 | GOODSAL  |
+| TURNER | 1500 | LOWSAL   |
+| ADAMS  | 1100 | LOWSAL   |
+| JAMES  |  950 | LOWSAL   |
+| FORD   | 3000 | LOWSAL   |
+| MILLER | 1300 | LOWSAL   |
++--------+------+----------+
+14 rows in set (0.00 sec)
+
+mysql> SELECT  ENAME,SAL,COMM,IF(SIGN(SAL-COMM)=1,"MORESAL","MORECOMM") "comments"
+    -> FROM EMP;
++--------+------+------+----------+
+| ENAME  | SAL  | COMM | comments |
++--------+------+------+----------+
+| SMITH  |  800 | NULL | MORECOMM |
+| ALLEN  | 1600 |  300 | MORESAL  |
+| WARD   | 1250 |  500 | MORESAL  |
+| JONES  | 2975 | NULL | MORECOMM |
+| MARTIN | 1250 | 1400 | MORECOMM |
+| BLAKE  | 2850 | NULL | MORECOMM |
+| CLARK  | 2450 | NULL | MORECOMM |
+| SCOTT  | 3000 | NULL | MORECOMM |
+| KING   | 5000 | NULL | MORECOMM |
+| TURNER | 1500 |    0 | MORESAL  |
+| ADAMS  | 1100 | NULL | MORECOMM |
+| JAMES  |  950 | NULL | MORECOMM |
+| FORD   | 3000 | NULL | MORECOMM |
+| MILLER | 1300 | NULL | MORECOMM |
++--------+------+------+----------+
+14 rows in set (0.00 sec)
+
+mysql> 
+mysql>  SELECT ENAME,SAL,JOB,
+    ->     (CASE WHEN JOB='CLERK' THEN 1.5*SAL
+    ->   WHEN JOB='SALESMAN' THEN 2.0*SAL
+    ->           WHEN  JOB='ANALYST' THEN 1.75*SAL
+    ->           ELSE
+    ->           SAL
+    ->           END) "bonus"
+    ->    FROM EMP
+    ->    ORDER BY 3;
++--------+------+-----------+-------+
+| ENAME  | SAL  | JOB       | bonus |
++--------+------+-----------+-------+
+| SCOTT  | 3000 | ANALYST   |  5250 |
+| FORD   | 3000 | ANALYST   |  5250 |
+| SMITH  |  800 | CLERK     |  1200 |
+| ADAMS  | 1100 | CLERK     |  1650 |
+| JAMES  |  950 | CLERK     |  1425 |
+| MILLER | 1300 | CLERK     |  1950 |
+| JONES  | 2975 | MANAGER   |  2975 |
+| BLAKE  | 2850 | MANAGER   |  2850 |
+| CLARK  | 2450 | MANAGER   |  2450 |
+| KING   | 5000 | PRESIDENT |  5000 |
+| ALLEN  | 1600 | SALESMAN  |  3200 |
+| WARD   | 1250 | SALESMAN  |  2500 |
+| MARTIN | 1250 | SALESMAN  |  2500 |
+| TURNER | 1500 | SALESMAN  |  3000 |
++--------+------+-----------+-------+
+14 rows in set (0.00 sec)
+
+mysql>  SELECT ENAME,SAL,JOB,
+    ->     (CASE JOB WHEN 'CLERK' THEN 1.5*SAL
+    ->   WHEN 'SALESMAN' THEN 2.0*SAL
+    ->           WHEN 'ANALYST' THEN 1.75*SAL
+    ->           ELSE
+    ->           SAL
+    ->           END) "bonus"
+    ->    FROM EMP
+    ->    ORDER BY 3;
++--------+------+-----------+-------+
+| ENAME  | SAL  | JOB       | bonus |
++--------+------+-----------+-------+
+| SCOTT  | 3000 | ANALYST   |  5250 |
+| FORD   | 3000 | ANALYST   |  5250 |
+| SMITH  |  800 | CLERK     |  1200 |
+| ADAMS  | 1100 | CLERK     |  1650 |
+| JAMES  |  950 | CLERK     |  1425 |
+| MILLER | 1300 | CLERK     |  1950 |
+| JONES  | 2975 | MANAGER   |  2975 |
+| BLAKE  | 2850 | MANAGER   |  2850 |
+| CLARK  | 2450 | MANAGER   |  2450 |
+| KING   | 5000 | PRESIDENT |  5000 |
+| ALLEN  | 1600 | SALESMAN  |  3200 |
+| WARD   | 1250 | SALESMAN  |  2500 |
+| MARTIN | 1250 | SALESMAN  |  2500 |
+| TURNER | 1500 | SALESMAN  |  3000 |
++--------+------+-----------+-------+
+14 rows in set (0.00 sec)
+
+mysql> 
+mysql> set @v1="2022-12-27";
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select   @v1,(case when date_format(@v1,"%m-%d")=date_format(curdate(),"%m-%d"
+    ->                then repeat("happy birthday  ",5)
+    ->               when date_format(@v1,"%m-d%")>date_format(curdate(),"%m-%d")
+    ->                then repeat("happy birthday  ",1)
+    ->                else
+    ->                repeat("belated birthday  ",2)
+    ->               end;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'then repeat("happy birthday  ",5)
+              when date_format(@v1,"%m-d%")>da' at line 2
+mysql> 
+mysql> 
+mysql> select   @v1,(case when date_format(@v1,"%m-%d")=
+    ->               date_format(curdate(),"%m-%d")
+    ->                then repeat("happy birthday  ",5)
+    ->               when date_format(@v1,"%m-d%")>date_format(curdate(),"%m-%d")
+    ->                then repeat("advanced birthday  ",1)
+    ->                else
+    ->                repeat("belated birthday  ",2)
+    ->               end;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 8
+mysql> 
+mysql> 
+mysql> 
+mysql> select   @v1,(case when date_format(@v1,"%m-%d")=
+    ->               date_format(curdate(),"%m-%d")
+    ->                then repeat("happy birthday  ",5)
+    ->               when date_format(@v1,"%m-d%")>date_format(curdate(),"%m-%d")
+    ->                then repeat("advanced birthday  ",1)
+    ->                else
+    ->                repeat("belated birthday  ",2)
+    ->               end) "greetings";
++------------+---------------------+
+| @v1        | greetings           |
++------------+---------------------+
+| 2022-12-27 | advanced birthday   |
++------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> set @v1="2022-12-28";
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select   @v1,(case when date_format(@v1,"%m-%d")=
+    ->               date_format(curdate(),"%m-%d")
+    ->                then repeat("happy birthday  ",5)
+    ->               when date_format(@v1,"%m-d%")>date_format(curdate(),"%m-%d")
+    ->                then repeat("advanced birthday  ",1)
+    ->                else
+    ->                repeat("belated birthday  ",2)
+    ->               end) "greetings";
++------------+----------------------------------------------------------------------------------+
+| @v1        | greetings                                                                        |
++------------+----------------------------------------------------------------------------------+
+| 2022-12-28 | happy birthday  happy birthday  happy birthday  happy birthday  happy birthday   |
++------------+----------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> \! cls;
+mysql> SET  @N1=100;@N2=200;@N3=100;
+Query OK, 0 rows affected (0.00 sec)
+
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '@N2=200' at line 1
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '@N3=100' at line 1
+mysql> SET  @N1=100,@N2=200,@N3=100;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT NULLIF(@N1,@N3);
++-----------------+
+| NULLIF(@N1,@N3) |
++-----------------+
+|            NULL |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT NULLIF(@N1,@N2);
++-----------------+
+| NULLIF(@N1,@N2) |
++-----------------+
+|             100 |
++-----------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT ENAME,LENGTH(ENAME),SAL,LENGTH(SAL),NULLIF(LENGTH(ENAME),LENGTH(SAL)) "nullif"
+    -> FROM   EMP
+    -> ORDER BY 2;
++--------+---------------+------+-------------+--------+
+| ENAME  | LENGTH(ENAME) | SAL  | LENGTH(SAL) | nullif |
++--------+---------------+------+-------------+--------+
+| WARD   |             4 | 1250 |           4 |   NULL |
+| KING   |             4 | 5000 |           4 |   NULL |
+| FORD   |             4 | 3000 |           4 |   NULL |
+| SMITH  |             5 |  800 |           3 |      5 |
+| ALLEN  |             5 | 1600 |           4 |      5 |
+| JONES  |             5 | 2975 |           4 |      5 |
+| BLAKE  |             5 | 2850 |           4 |      5 |
+| CLARK  |             5 | 2450 |           4 |      5 |
+| SCOTT  |             5 | 3000 |           4 |      5 |
+| ADAMS  |             5 | 1100 |           4 |      5 |
+| JAMES  |             5 |  950 |           3 |      5 |
+| MARTIN |             6 | 1250 |           4 |      6 |
+| TURNER |             6 | 1500 |           4 |      6 |
+| MILLER |             6 | 1300 |           4 |      6 |
++--------+---------------+------+-------------+--------+
+14 rows in set (0.00 sec)
+
+mysql> SELECT ENAME,SAL,COMM,SAL+COMM FROM EMP;
++--------+------+------+----------+
+| ENAME  | SAL  | COMM | SAL+COMM |
++--------+------+------+----------+
+| SMITH  |  800 | NULL |     NULL |
+| ALLEN  | 1600 |  300 |     1900 |
+| WARD   | 1250 |  500 |     1750 |
+| JONES  | 2975 | NULL |     NULL |
+| MARTIN | 1250 | 1400 |     2650 |
+| BLAKE  | 2850 | NULL |     NULL |
+| CLARK  | 2450 | NULL |     NULL |
+| SCOTT  | 3000 | NULL |     NULL |
+| KING   | 5000 | NULL |     NULL |
+| TURNER | 1500 |    0 |     1500 |
+| ADAMS  | 1100 | NULL |     NULL |
+| JAMES  |  950 | NULL |     NULL |
+| FORD   | 3000 | NULL |     NULL |
+| MILLER | 1300 | NULL |     NULL |
++--------+------+------+----------+
+14 rows in set (0.00 sec)
+
+mysql> SELECT ENAME,SAL,COMM,SAL+COMM,IFNULL((SAL+COMM),SAL) "ifnull"
+    -> FROM EMP
+    -> ORDER BY COMM;
++--------+------+------+----------+--------+
+| ENAME  | SAL  | COMM | SAL+COMM | ifnull |
++--------+------+------+----------+--------+
+| SMITH  |  800 | NULL |     NULL |    800 |
+| JONES  | 2975 | NULL |     NULL |   2975 |
+| BLAKE  | 2850 | NULL |     NULL |   2850 |
+| CLARK  | 2450 | NULL |     NULL |   2450 |
+| SCOTT  | 3000 | NULL |     NULL |   3000 |
+| KING   | 5000 | NULL |     NULL |   5000 |
+| ADAMS  | 1100 | NULL |     NULL |   1100 |
+| JAMES  |  950 | NULL |     NULL |    950 |
+| FORD   | 3000 | NULL |     NULL |   3000 |
+| MILLER | 1300 | NULL |     NULL |   1300 |
+| TURNER | 1500 |    0 |     1500 |   1500 |
+| ALLEN  | 1600 |  300 |     1900 |   1900 |
+| WARD   | 1250 |  500 |     1750 |   1750 |
+| MARTIN | 1250 | 1400 |     2650 |   2650 |
++--------+------+------+----------+--------+
+14 rows in set (0.00 sec)
+
+mysql> SELECT STR_TO_DATE("10-MAY-2022","%d-%M-%Y");
++---------------------------------------+
+| STR_TO_DATE("10-MAY-2022","%d-%M-%Y") |
++---------------------------------------+
+| 2022-05-10                            |
++---------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> SELECT STR_TO_DATE("10-MAY-22","%d-%M-%y");
++-------------------------------------+
+| STR_TO_DATE("10-MAY-22","%d-%M-%y") |
++-------------------------------------+
+| 2022-05-10                          |
++-------------------------------------+
+1 row in set (0.00 sec)
+
+mysql> select * from emp where deptno=20;
++-------+-------+---------+------+------------+------+------+--------+
+| EMPNO | ENAME | JOB     | MGR  | HIREDATE   | SAL  | COMM | DEPTNO |
++-------+-------+---------+------+------------+------+------+--------+
+|  7369 | SMITH | CLERK   | 7902 | 1980-12-17 |  800 | NULL |     20 |
+|  7566 | JONES | MANAGER | 7839 | 1981-04-02 | 2975 | NULL |     20 |
+|  7788 | SCOTT | ANALYST | 7566 | 1987-07-13 | 3000 | NULL |     20 |
+|  7876 | ADAMS | CLERK   | 7788 | 1987-07-13 | 1100 | NULL |     20 |
+|  7902 | FORD  | ANALYST | 7566 | 1981-12-03 | 3000 | NULL |     20 |
++-------+-------+---------+------+------------+------+------+--------+
+5 rows in set (0.00 sec)
+
+mysql>   set @@sql_mode="only_full_group_by";
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> 
+mysql> #FIND NUBMER OF EMPLOYEES AS PER EMP TABLE
+mysql> SELECT COUNT(*) FROM EMP;
++----------+
+| COUNT(*) |
++----------+
+|       14 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> SELECT COUNT(COMM) FROM EMP;
++-------------+
+| COUNT(COMM) |
++-------------+
+|           4 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(HIREDATE),COUNT(ENAME),COUNT(SAL),COUNT(EMPNO) FROM EMP;
++-----------------+--------------+------------+--------------+
+| COUNT(HIREDATE) | COUNT(ENAME) | COUNT(SAL) | COUNT(EMPNO) |
++-----------------+--------------+------------+--------------+
+|              14 |           14 |         14 |           14 |
++-----------------+--------------+------------+--------------+
+1 row in set (0.00 sec)
+
+mysql> #FIND HOW MANY ARE WORKING AS CLERK
+mysql> SELECT COUNT(EMPNO)
+    -> FROM   EMP
+    -> WHERE  JOB="CLERK";
++--------------+
+| COUNT(EMPNO) |
++--------------+
+|            4 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> SELECT MIN(SAL),MIN(HIREDATE),MIN(ENAME)
+    -> FROM EMP;
++----------+---------------+------------+
+| MIN(SAL) | MIN(HIREDATE) | MIN(ENAME) |
++----------+---------------+------------+
+|      800 | 1980-12-17    | ADAMS      |
++----------+---------------+------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> SELECT MAX(SAL),MAX(HIREDATE),MAX(ENAME)
+    -> FROM   EMP;
++----------+---------------+------------+
+| MAX(SAL) | MAX(HIREDATE) | MAX(ENAME) |
++----------+---------------+------------+
+|     5000 | 1987-07-13    | WARD       |
++----------+---------------+------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT SUM(SAL),AVG(SAL) FROM EMP;
++----------+-------------------+
+| SUM(SAL) | AVG(SAL)          |
++----------+-------------------+
+|    29025 | 2073.214285714286 |
++----------+-------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT SUM(SAL),DEPTNO FROM EMP;
+ERROR 1140 (42000): In aggregated query without GROUP BY, expression #2 of SELECT list contains nonaggregated column 'newtestdb.EMP.DEPTNO'; this is incompatible with sql_mode=only_full_group_by
+mysql> SELECT SUM(SAL),DEPTNO
+    -> FROM   EMP
+    -> GROUP BY DEPTNO;
++----------+--------+
+| SUM(SAL) | DEPTNO |
++----------+--------+
+|     8750 |     10 |
+|    10875 |     20 |
+|     9400 |     30 |
++----------+--------+
+3 rows in set (0.00 sec)
+
+mysql> 
+mysql> 
+mysql> #FIND OUT NUMBER OF EMPLOYEES JOINED IN EACH YEAR
+mysql> 
+mysql> 
+mysql> 
+mysql> SELECT COUNT(EMPNO),YEAR(HIREDATE) "YEAR"
+    -> FROM   EMP
+    -> GROUP BY YEAR(HIREDATE);
++--------------+------+
+| COUNT(EMPNO) | YEAR |
++--------------+------+
+|            1 | 1980 |
+|           10 | 1981 |
+|            2 | 1987 |
+|            1 | 1982 |
++--------------+------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(EMPNO),YEAR(HIREDATE) "YEAR"
+    -> FROM   EMP
+    -> GROUP BY YEAR(HIREDATE)
+    -> ORDER BY 1 DESC;
++--------------+------+
+| COUNT(EMPNO) | YEAR |
++--------------+------+
+|           10 | 1981 |
+|            2 | 1987 |
+|            1 | 1980 |
+|            1 | 1982 |
++--------------+------+
+4 rows in set (0.00 sec)
+
+mysql> #FIND OUT EMPLOYEES IN EACH QUARTER OF A YEAR
+mysql> 
+mysql> #FIND OUT NUMBER OF EMPLOYEES IN EACH QUARTER OF A YEAR
+mysql> SELECT COUNT(EMPNO),YEAR(HIREDATE) "YEAR",QUARTER(HIREDATE) "QUARTER"
+    -> FROM   EMP
+    -> GROUP BY YEAR(HIREDATE),QUARTER(HIREDATE);
++--------------+------+---------+
+| COUNT(EMPNO) | YEAR | QUARTER |
++--------------+------+---------+
+|            1 | 1980 |       4 |
+|            2 | 1981 |       1 |
+|            3 | 1981 |       2 |
+|            2 | 1981 |       3 |
+|            2 | 1987 |       3 |
+|            3 | 1981 |       4 |
+|            1 | 1982 |       1 |
++--------------+------+---------+
+7 rows in set (0.00 sec)
+
+mysql> #FIND OUT NUMBER OF EMPLOYEES JOINED IN EACH MONTH AND SORT THE DATA(JAN,FEB,....)
+mysql> SELECT COUNT(EMPNO),MONTHNAME(HIRDATE) "MONTH"
+    -> FROM   EMP
+    -> GROUP BY MONTHNAME(HIREDATE),DATE_FORMAT(HIREDATE,'%M')
+    -> ^C
+mysql> SELECT COUNT(EMPNO),MONTHNAME(HIRDATE) "MONTH"
+    -> FROM   EMP
+    -> GROUP BY MONTHNAME(HIREDATE),DATE_FORMAT(HIREDATE,'%m')
+    -> order by DATE_FORMAT(HIREDATE,'%m');
+ERROR 1054 (42S22): Unknown column 'HIRDATE' in 'field list'
+mysql> SELECT COUNT(EMPNO),MONTHNAME(HIReDATE) "MONTH"
+    -> FROM   EMP
+    -> GROUP BY MONTHNAME(HIREDATE),DATE_FORMAT(HIREDATE,'%m');
++--------------+-----------+
+| COUNT(EMPNO) | MONTH     |
++--------------+-----------+
+|            3 | December  |
+|            2 | February  |
+|            1 | April     |
+|            2 | September |
+|            1 | May       |
+|            1 | June      |
+|            2 | July      |
+|            1 | November  |
+|            1 | January   |
++--------------+-----------+
+9 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(EMPNO),MONTHNAME(HIReDATE) "MONTH"
+    -> FROM   EMP
+    -> GROUP BY MONTHNAME(HIREDATE),DATE_FORMAT(HIREDATE,'%m')
+    -> order by DATE_FORMAT(HIREDATE,'%m');
++--------------+-----------+
+| COUNT(EMPNO) | MONTH     |
++--------------+-----------+
+|            1 | January   |
+|            2 | February  |
+|            1 | April     |
+|            1 | May       |
+|            1 | June      |
+|            2 | July      |
+|            2 | September |
+|            1 | November  |
+|            3 | December  |
++--------------+-----------+
+9 rows in set (0.00 sec)
+
+mysql> select count(*),sal from emp group by sal;
++----------+------+
+| count(*) | sal  |
++----------+------+
+|        1 |  800 |
+|        1 | 1600 |
+|        2 | 1250 |
+|        1 | 2975 |
+|        1 | 2850 |
+|        1 | 2450 |
+|        2 | 3000 |
+|        1 | 5000 |
+|        1 | 1500 |
+|        1 | 1100 |
+|        1 |  950 |
+|        1 | 1300 |
++----------+------+
+12 rows in set (0.00 sec)
+
+mysql> #find out number of employees who are taking same salaries
+mysql> select count(*),sal from emp group by sal having count(*)>1;
++----------+------+
+| count(*) | sal  |
++----------+------+
+|        2 | 1250 |
+|        2 | 3000 |
++----------+------+
+2 rows in set (0.00 sec)
+
+mysql> 
+mysql> select count(*),avg(sal),deptno from emp group by deptno;
++----------+--------------------+--------+
+| count(*) | avg(sal)           | deptno |
++----------+--------------------+--------+
+|        3 | 2916.6666666666665 |     10 |
+|        5 |               2175 |     20 |
+|        6 | 1566.6666666666667 |     30 |
++----------+--------------------+--------+
+3 rows in set (0.00 sec)
+
+mysql> select count(*),avg(sal),deptno from emp group by deptno having count(*)>5;
++----------+--------------------+--------+
+| count(*) | avg(sal)           | deptno |
++----------+--------------------+--------+
+|        6 | 1566.6666666666667 |     30 |
++----------+--------------------+--------+
+1 row in set (0.00 sec)
+
+mysql> select job,max(sal) from emp group by job having max(sal)>=3000;
++-----------+----------+
+| job       | max(sal) |
++-----------+----------+
+| ANALYST   |     3000 |
+| PRESIDENT |     5000 |
++-----------+----------+
+2 rows in set (0.00 sec)
+
+mysql> 
+mysql> select sum(sal),count(*),avg(sal),max(sal),min(sal)
+    -> from   emp
+    -> where  deptno=20
+    -> group by deptno,job
+    -> having avg(sal)>1000
+    -> order by 2;
++----------+----------+----------+----------+----------+
+| sum(sal) | count(*) | avg(sal) | max(sal) | min(sal) |
++----------+----------+----------+----------+----------+
+|     2975 |        1 |     2975 |     2975 |     2975 |
+|     6000 |        2 |     3000 |     3000 |     3000 |
++----------+----------+----------+----------+----------+
+2 rows in set (0.00 sec)
+
+mysql>  select sum(sal),count(*),avg(sal),max(sal),min(sal),deptno,job
+    -> from   emp
+    -> where  deptno=20
+    -> group by deptno,job
+    -> having avg(sal)>1000
+    -> order by 2;
++----------+----------+----------+----------+----------+--------+---------+
+| sum(sal) | count(*) | avg(sal) | max(sal) | min(sal) | deptno | job     |
++----------+----------+----------+----------+----------+--------+---------+
+|     2975 |        1 |     2975 |     2975 |     2975 |     20 | MANAGER |
+|     6000 |        2 |     3000 |     3000 |     3000 |     20 | ANALYST |
++----------+----------+----------+----------+----------+--------+---------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(*) FROM EMP GROUP BY DEPTNO;
++----------+
+| COUNT(*) |
++----------+
+|        3 |
+|        5 |
+|        6 |
++----------+
+3 rows in set (0.00 sec)
+
