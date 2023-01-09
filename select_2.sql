@@ -107,3 +107,43 @@ ORDER BY 2;
 
 
 select MAX(COUNT(*)) from emp GROUP BY `DEPTNO`;
+
+
+SHOW tables;
+DESCRIBE emp;
+DESCRIBE dept;
+
+SELECT * from emp;
+SELECT * from dept;
+SELECT ename as "ename" FROM emp WHERE `HIREDATE` BETWEEN '1981-02-20' and '1982-01-01';
+
+SELECT deptno, count(*) as "DeptEmpCount"
+FROM emp
+GROUP BY deptno
+HAVING COUNT(*) < 10
+ORDER BY DeptEmpCount desc;
+
+
+select E.ename, d.dname
+FROM emp E
+JOIN dept d on  E.deptno = d.deptno
+WHERE d.loc='CHICAGO';
+
+select CONCAT(EmpFname," ",EmpLname) as "FullName"
+FROM Employeeinfo
+WHERE EmpFname like 'S%' and DOB BETWEEN '02-05-1970' and '31-12-1975';
+
+SELECT Department, count(*) as "DeptEmpCount"
+FROM EmployeeInfo
+GROUP BY Department
+HAVING COUNT(*) < 2
+ORDER BY DeptEmpCount desc;
+
+
+select CONCAT(EmpFname," ",EmpLname) as "FullName", e.EmpPosition
+FROM EmployeeInfo e
+JOIN EmployeePosition p on  e.EmpID = p.EmpID
+WHERE p.EmpPosition = "Manager";
+
+SELECT day(hiredate)
+from emp;

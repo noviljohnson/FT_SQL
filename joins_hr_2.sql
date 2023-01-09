@@ -24,3 +24,8 @@ USING(department_id);
 
 SHOW tables;
 SELECT * from countries;
+
+
+select CONCAT(EmpFname,EmpLname) "FullName"
+FROM Employeeinfo
+WHERE EmpFname like 'S%' and DOB BETWEEN '0'
