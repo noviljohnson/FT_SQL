@@ -1,4 +1,4 @@
--- Active: 1671700995648@@127.0.0.1@3308@org
+-- Active: 1671700995648@@127.0.0.1@3308@hr
 
 -- # Stored PROCEDURE
 DELIMITER //
@@ -129,3 +129,113 @@ DELIMITER ;
 
 CALL calTax(900000,@myTax);
 SELECT @myTax;
+
+SHOW tables;
+DESCRIBE title;
+DESCRIBE worker;
+SELECT * 
+FROM worker w 
+RIGHT OUTER JOIN title t on w.`WORKER_ID` = t.`WORKER_REF_ID`;
+
+
+
+--  inparameter
+
+
+SHOW tables;
+DESCRIBE countries;
+SELECT * FROM countries;
+
+DELIMITER //
+CREATE Procedure getCountryDetails(IN countryname VARCHAR(255))
+BEGIN 
+
+SELECT * FROM countries
+WHERE country_name = countryname;
+
+END //
+
+DELIMITER ;
+CALL getCountryDetails('Belgium');
+
+
+-- inout parameter
+
+DELIMITER //
+
+CREATE Procedure countCountries(
+    INOUT counter INT
+)
+BEGIN
+    set @counter = (SELECT count(DISTINCT country_name) from countries);
+END //
+
+DELIMITER ;
+SELECT count(DISTINCT country_name) from countries;
+
+CALL countCountries(@mycntr);
+SELECT @mycntr;
+
+
+SELECT * 
+FROM information_schema.`ROUTINES`
+WHERE `ROUTINE_TYPE`= 'PROCEDURE'
+    AND `ROUTINE_SCHEMA` = 'classicmodels';
+
+SELECT * 
+FROM information_schema.`ROUTINES`
+WHERE `ROUTINE_TYPE`= 'PROCEDURE'
+    AND `ROUTINE_SCHEMA` = 'hr';
+
+
+
+-- DROP TABLE summary;
+-- CREATE Table emp_stats select count(*) cnt from employees;
+CREATE TABLE summary (
+    count_emps INT DEFAULT 0,
+    ind INT PRIMARY KEY AUTO_INCREMENT
+);
+INSERT INTO summary(count_emps) values((SELECT COUNT(*) from employees));
+SELECT * FROM summary;
+
+SELECT * FROM employees;
+
+DROP TRIGGER add_new_employee;
+
+DELIMITER //
+
+CREATE Trigger  add_new_employee
+    BEFORE INSERT ON employees
+    for EACH ROW
+BEGIN
+
+    UPDATE summary
+    SET count_emps = count_emps + 1;
+    -- WHERE ind = 1;
+
+END //
+
+DELIMITER ;
+
+INSERT INTO employees VALUES(994,"Novil", "Johnson", "noviljohnson", 2323232, '2022-12-15',"IT_PROG",25000,NULL,100,90);
+
+SELECT * from summary;
+
+-- Update summary set count_emps = (SELECT COUNT(*) from employees); 
+
+DELIMITER //
+
+CREATE Trigger rm_emp_cnt
+    AFTER DELETE on employees
+    for EACH ROW
+BEGIN
+    UPDATE summary
+    SET count_emps = count_emps - 1;
+END //
+
+DELIMITER ;
+
+DELETE FROM employees WHERE employee_id = 990;
+
+SELECT * from summary;
+SELECT * from emp_stats;
