@@ -239,3 +239,6 @@ DELETE FROM employees WHERE employee_id = 990;
 
 SELECT * from summary;
 SELECT * from emp_stats;
+
+
+SELECT LAST_INSERT_ID();
