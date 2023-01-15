@@ -162,3 +162,5 @@ DELIMITER ;
 set @name="ram";
 CALL pro_inout2(@name);
 SELECT @name;
+
+
