@@ -79,34 +79,51 @@ DELIMITER;
 CALL add_new("Novil", 7730826408);
 
 
+
+
 -- New_book: a PROCEDURE that adds a new book to the book table. columns pass as parameter.
 
 DELIMITER //
 CREATE PROCEDURE add_book(IN pub VARCHAR(30), IN auth VARCHAR(13), IN title VARCHAR(30), IN sub VARCHAR(20))
 BEGIN
-    INSERT INTO book(bpub, bauth, btitle, bsub) values(pub,auth,title,sub);
-    -- SELECT "Data inserted";
-    -- if (pub,auth,title,sub) not in (SELECT bpub,bauth,btitle,bsub from book WHERE bpub =pub) then
-    --     INSERT INTO book(bpub,bauth,btitle,bsub) VALUES(pub,auth,title,sub);
-    --     INSERT INTO bcopy(1,(SELECT bookid from book where bpub=pub and bauth=bauth),"available");
-    -- else 
-    --     INSERT INTO bcopy(1,(SELECT bookid from book where bpub=pub and bauth=bauth),"available");
-    -- end if;
+    --  can insert only new book (not a copy of an existing book)
+    SELECT "Data inserted";
+    if (pub,auth,title,sub) not in (SELECT bpub,bauth,btitle,bsub from book WHERE bpub =pub) then
+        INSERT INTO book(bpub,bauth,btitle,bsub) VALUES(pub,auth,title,sub);
+    end if;
 END//
+
 
 --  trigger
 
 CREATE TRIGGER book_insert
     BEFORE INSERT on book
     FOR EACH ROW
-    BEGIN
-          INSERT INTO bcopy VALUES(1,(SELECT max(bookid)+1 from book),"available");
+BEGIN
+    
+        declare b_id int;
+        select bookid into b_id from book WHERE bpub =new.bpub and bauth = new.bauth and btitle = new.btitle and bsub = new.bsub;
+
+        if b_id is NULL then
+            INSERT INTO bcopy VALUES(1,
+                    (SELECT max(bookid)+1 from book),
+                    "available");
+        -- else 
+        --     INSERT INTO bcopy VALUES(
+        --             (select max(c_id)+1 from bcopy WHERE bookid=b_id),
+        --             b_id,
+        --             "available");
+        end if;
+        -- INSERT INTO bcopy VALUES(1,(SELECT max(bookid)+1 from book),"available");
 END //
 
 DELIMITER ;
 
+-- DROP PROCEDURE add_book;
+-- DROP TRIGGER book_insert;
+
 CALL add_book("NJ", "Johnson", "Life sciences", "MY.Science");
-CALL add_book("NS", "Novil", "Biology", "MY.Science");
+CALL add_book("NS", "KR Murthy", "Freedom from the known", "Philosophy");
 SELECT * FROM book;
 SELECT * FROM bcopy;
 
@@ -126,7 +143,7 @@ BEGIN
     SELECT min(c_id) into cp from bcopy WHERE bookid = bid and `status` like "a%";
 
     if cp is NULL then
-        INSERT INTO bres VALUES (mid,bid,CURDATE());
+        -- INSERT INTO bres VALUES (mid,bid,CURDATE());
         RETURN NULL;
     else
         set ret = DATE_ADD(CURDATE(),INTERVAL 3 DAY);
@@ -175,6 +192,35 @@ CALL return_book(3,1);
 CALL return_book(6,1);
 
 
+DELIMITER //
+
+
+-- reserve
+
+DELIMITER //
+CREATE PROCEDURE reserve(bid int, mid int)
+BEGIN
+    DECLARE ret DATE DEFAULT NULL;
+    DECLARE cp int;
+
+    SELECT min(c_id) into cp from bcopy WHERE bookid = bid and `status` like "a%";
+    select min(exp_date) into ret from bloan where bookid = bid and act_date is NULL;
+
+    if cp is not NULL then
+        INSERT INTO bres VALUES (mid,bid,CURDATE());
+    end IF;
+
+    SELECT concat("expected return ",ret);
+END//
+
+DELIMITER ;
+-- DROP PROCEDURE reserve;
+CALL reserve(1,2);
+
+SELECT * FROM bres;
+SELECT * from member;
+SELECT * from bcopy;
+SELECT * from bloan;
 
 -- pmem_book;
 
