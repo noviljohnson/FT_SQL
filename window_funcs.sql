@@ -112,3 +112,18 @@ from emp;
 SELECT ename, sal, last_value(sal) over(rows between CURRENT row and UNBOUNDED FOLLOWING) "values"
 from emp;
 
+
+-- window order by
+SELECT ename, hiredate, FIRST_VALUE(hiredate) over w "1st",
+    LAST_VALUE(hiredate) over w "last",
+    NTH_VALUE(hiredate,5) over w '5th'
+    FROM emp
+    WINDOW w as (order BY `HIREDATE`);
+
+
+with dc as (SELECT deptno, count(*) cnt from emp GROUP BY deptno)
+SELECT e.ename "emp", e.deptno "edep", m.ename "manager", m.deptno "mdep", dc1.cnt "empcount", dc2.cnt "mngmnt" 
+FROM emp e join emp m on e.mgr=m.empno
+    JOIN dc dc1 on e.deptno=dc1.deptno
+    JOIN dc dc2 on m.deptno = dc2.deptno;
+    
