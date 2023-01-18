@@ -127,3 +127,4 @@ FROM emp e join emp m on e.mgr=m.empno
     JOIN dc dc1 on e.deptno=dc1.deptno
     JOIN dc dc2 on m.deptno = dc2.deptno;
     
+

@@ -115,3 +115,79 @@ CREATE INDEX
     id_idx on fruit(id);
 
 EXPLAIN FORMAT = tree SELECT * from fruit WHERE id=101;
+
+
+
+
+
+-- day2
+
+USE hr;
+DESCRIBE regions;
+EXPLAIN format=tree SELECT * from regions WHERE region_id=1;
+
+use ft_db;
+show tables;
+
+desc emp;
+
+SHOW INDEXES from emp;
+
+CREATE Table empEx as SELECT * from emp;
+
+SHOW INDEXES from empEx;
+
+EXPLAIN SELECT * from empex WHERE job='CLERK';
+EXPLAIN format=tree SELECT * from empex WHERE job='CLERK';
+
+EXPLAIN SELECT * FROM dept WHERE dname='SALES';
+SHOW INDEXES from dept;
+EXPLAIN FORMAT = tree SELECT * from dept WHERE dname='SALES';
+
+CREATE INDEX dname_indx on dept(dname);
+
+EXPLAIN SELECT * FROM dept WHERE dname='SALES';
+SHOW INDEXES from dept;
+EXPLAIN FORMAT = tree SELECT * from dept WHERE dname='SALES';
+
+
+show TABLes;
+
+EXPLAIN SELECT * from emp WHERE `DEPTNO`=20 and job='CLERK';
+EXPLAIN FORMAT = tree SELECT * from emp WHERE `DEPTNO`=20 and job='CLERK';
+SELECT * from emp WHERE `DEPTNO`=20 and job='CLERK';
+SHOW INDEXes from emp;
+
+ALTER Table emp alter INDEX fk_deptno invisible;
+ALTER Table emp alter INDEX fk_deptno visible;
+
+EXPLAIN SELECT * from emp WHERE `DEPTNO`=20 and job='CLERK';
+EXPLAIN FORMAT = tree SELECT * from emp WHERE `DEPTNO`=20 and job='CLERK';
+
+
+
+EXPLAIN SELECT * from check_extent WHERE job='CLERK';
+EXPLAIN FORMAT = tree SELECT * from check_extent WHERE job='CLERK';
+
+
+-- composite INDEX
+CREATE index comp_dept_job ON emp (deptno,job);
+EXPLAIN SELECT * from emp WHERE `DEPTNO`=20 and job='CLERK';
+EXPLAIN FORMAT = tree SELECT * from emp WHERE `DEPTNO`=20 and job='CLERK';
+
+CREATE INDEX dept on emp (deptno);
+EXPLAIN FORMAT = tree SELECT * from emp FORCE INDEX(dept)  WHERE `DEPTNO`=20 and job='CLERK';
+
+
+EXPLAIN SELECT * from fruit WHERE id=101;
+EXPLAIN FORMAT = tree SELECT * from fruit WHERE id=101;
+
+ALTER Table fruit ADD constraint pk_id PRIMARY KEY (id);
+
+EXPLAIN SELECT * from fruit WHERE id=101;
+EXPLAIN FORMAT = tree SELECT * from fruit WHERE id=101;
+
+SHOW INDEXES FROM fruit;
+
+
+
