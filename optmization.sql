@@ -191,3 +191,158 @@ SHOW INDEXES FROM fruit;
 
 
 
+
+
+--  Derived
+
+EXPLAIN SELECT * from (SELECT max(sal) from emp) a;
+EXPLAIN format = tree SELECT * from (SELECT max(sal) from emp) a;
+
+use hr;
+EXPLAIN SELECT * FROM regions WHERE region_id=4;
+
+ALTER table emp alter ;
+SHOW tables;
+
+use ft_db;
+SHOW tables;
+SHOW INDEXES from emp;
+SHOW CREATE TABLE emp;
+ALTER TABLE emp alter index comp_dept_job invisible;
+
+
+EXPLAIN SELECT * from emp WHERE `DEPTNO`=10 and job = 'CLERK';
+
+EXPLAIN SELECT * from emp WHERE `HIREDATE`='1981-12-03';
+
+SELECT count(comm) from check_extent;
+
+EXPLAIN SELECT * from emp WHERE comm is null;
+CREATE INDEX comm_indx on emp(comm);
+EXPLAIN SELECT * from emp WHERE comm is null;
+EXPLAIN SELECT * from emp WHERE comm is not null;
+CREATE INDEX comm_indx on check_extent(comm);
+EXPLAIN SELECT * from check_extent WHERE comm is null;
+EXPLAIN SELECT * from check_extent WHERE comm is not null;
+
+
+EXPLAIN SELECT * FROM emp WHERE deptno=20;
+EXPLAIN SELECT * from emp WHERE job='CLERK';
+EXPLAIN format = tree SELECT * FROM emp WHERE deptno=20;
+EXPLAIN format = tree SELECT * from emp  WHERE job='CLERK';
+
+SHOW INDEXES from emp;
+CREATE INDEX job_indx on emp(job);
+
+EXPLAIN SELECT * FROM emp WHERE deptno=20;
+EXPLAIN SELECT * from emp WHERE job='CLERK';
+EXPLAIN format = tree SELECT * FROM emp WHERE deptno=20;
+EXPLAIN format = tree SELECT * from emp  WHERE job='CLERK';
+
+ALTER TABLE emp alter INDEX comp_dept_job visible;
+EXPLAIN format = tree SELECT * from emp force INDEX(comp_dept_job) WHERE job='CLERK';
+EXPLAIN SELECT * from emp force INDEX(comp_dept_job) WHERE job='CLERK';
+
+
+SELECT * from sys.schema_unused_indexes;
+
+EXPLAIN SELECT * from emp where empno>7839;
+EXPLAIN SELECT * from emp where empno like '78%';
+EXPLAIN SELECT * from emp WHERE empno BETWEEN 7369 and 7839;
+
+
+-- aggrigates
+
+EXPLAIN SELECT min(sal) from emp;
+EXPLAIN FORMAT = tree SELECT min(sal) from emp;
+
+CREATE INDEX sal_indx on emp(sal);
+
+EXPLAIN SELECT min(sal) from emp;
+EXPLAIN FORMAT = tree SELECT min(sal) from emp;
+
+EXPLAIN format = tree SELECT sum(sal),job from emp GROUP BY job;
+EXPLAIN format = tree SELECT sum(sal),job from emp GROUP BY job HAVING job<>'analyst';
+SHOW INDEXES FROM EMP;
+
+EXPLAIN FORMAT = tree
+SELECT COUNT(employee_id), department_id
+from employees
+GROUP BY department_id
+HAVING department_id in (60,80);
+
+EXPLAIN FORMAT = tree
+SELECT COUNT(employee_id), department_id
+from employees
+where department_id in (60,80)
+GROUP BY department_id;
+
+
+-- practice 1
+
+CREATE Table student1(student_id INT(4) PRIMARY KEY,
+                        student_name VARCHAR(15),
+                        result VARCHAR(1),
+                        constraint result_ck check (result in ('P','F')));
+
+INSERT INTO student1 SELECT empno,ename,NULL from emp1;
+
+update student1 set result = if(student_name like '%S%', 'P','F');
+
+SELECT * FROM student1;
+
+SELECT COUNT(*) 'No of stu', result from student1 GROUP BY result;
+EXPLAIN SELECT COUNT(*) 'No of stu', result from student1 GROUP BY result;
+EXPLAIN format = tree SELECT COUNT(*) 'No of stu', result from student1 GROUP BY result;
+
+CREATE INDEX reslt_indx on student1(result);
+ALTER Table student1 alter INDEX reslt_indx invisible;
+
+explain format = tree SELECT COUNT(*) from student1 WHERE result = 'F';
+
+EXPLAIN FORMAT = tree
+SELECT sum(sal), job from emp GROUP BY job
+UNION
+SELECT sum(sal), null from emp;
+
+explain format = tree SELECT sum(sal), job from emp GROUP BY job with ROLLUP;
+
+SHOW tables from ft_db;
+explain format = tree SELECT sum(salary), job_id from hr.employees GROUP BY job_id with ROLLUP;
+EXPLAIN FORMAT = tree
+SELECT sum(salary), job_id from hr.employees GROUP BY job_id
+UNION
+SELECT sum(salary), null from hr.employees;
+
+
+
+-- Joins
+
+CREATE Table reg1 as SELECT * FROM hr.regions;
+CREATE Table country1 as SELECT * FROM hr.countries;
+
+
+EXPLAIN SELECT region_name , country_name from reg1 NATURAL JOIN country1;
+EXPLAIN format = tree SELECT region_name , country_name from reg1 NATURAL JOIN country1;
+
+CREATE INDEX reg_id_indx on country1(region_id);
+
+EXPLAIN format = tree SELECT region_name , country_name from reg1 NATURAL JOIN country1;
+
+CREATE INDEX reg1_id_indx on reg1(region_id);
+
+EXPLAIN format = tree SELECT region_name , country_name from reg1 NATURAL JOIN country1;
+
+ALTER TABLE reg1 ADD constraint pk_regid_reg1 PRIMARY KEY  reg1(region_id);
+EXPLAIN format = tree SELECT  country_name,region_name from reg1 NATURAL JOIN country1;
+EXPLAIN format = tree SELECT   r2.region_name, r.region_name from reg1 r NATURAL JOIN reg1 r2;
+SELECT * FROM reg1;
+SELECT * FROM country1;
+
+SHOW INDEXES from reg1;
+SHOW INDEXES from country1;
+
+ALTER Table country1 ADD constraint fk_regid_cntry FOREIGN KEY country1(region_id) REFERENCES reg1(region_id);
+
+EXPLAIN format = tree SELECT  country_name,region_name from reg1 NATURAL JOIN country1;
+
