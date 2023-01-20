@@ -346,3 +346,66 @@ ALTER Table country1 ADD constraint fk_regid_cntry FOREIGN KEY country1(region_i
 
 EXPLAIN format = tree SELECT  country_name,region_name from reg1 NATURAL JOIN country1;
 
+
+
+-- compasite PARTITION 
+
+create table compo_range_hash(empno int, ename varchar(20), sal int, job varchar(20))
+partition by range(sal)
+subpartition by hash(empno)
+subpartitions 2
+(
+	partition P_1K values less than (1000),
+    partition P_2K values less than (2000),
+    partition P_3K values less than (3000),
+    partition P_4K values less than (4000),
+    partition P_MAX values less than maxvalue
+);
+-- DROP TABLE compo_range_hash;
+
+INSERT into compo_range_hash SELECT empno, ename, sal, job
+FROM check_extent;
+
+SELECT PARTITION_name, table_rows, SUBPARTITION_name
+from information_schema.`PARTITIONS`
+WHERE `TABLE_NAME`='compo_range_hash';
+
+explain SELECT * FROM compo_range_hash PARTITION(p_1k);
+
+
+SELECT * from emp WHERE sal in ( SELECT min(sal) from emp);
+EXPLAIN SELECT * from emp WHERE sal in ( SELECT min(sal) from emp);
+EXPLAIN format = tree SELECT * from emp WHERE sal in ( SELECT min(sal) from emp);
+SHOW INDEXES from emp;
+EXPLAIN format = tree SELECT * from emp force INDEX (sal_indx) WHERE sal in ( SELECT min(sal) from emp);
+
+EXPLAIN format = tree SELECT * from emp force INDEX (sal_indx) WHERE sal = ( SELECT min(sal) from emp);
+EXPLAIN format = tree SELECT * from emp WHERE sal = ( SELECT min(sal) from emp);
+
+
+SELECT ename, sal, deptno
+from emp e WHERE sal>(SELECT avg(sal) from emp WHERE `DEPTNO`=e.`DEPTNO`);
+EXPLAIN SELECT ename, sal, deptno
+from emp e WHERE sal>(SELECT avg(sal) from emp WHERE `DEPTNO`=e.`DEPTNO`);
+EXPLAIN format = tree SELECT ename, sal, deptno
+from emp e 
+WHERE sal>(SELECT avg(sal) from emp WHERE `DEPTNO`=e.`DEPTNO`);
+EXPLAIN format = tree SELECT ename, sal, deptno
+from emp e force index(sal_indx) 
+WHERE sal>(SELECT avg(sal) from emp WHERE `DEPTNO`=e.`DEPTNO`);
+
+explain format=tree
+select d.deptno,d.dname
+from dept d
+where not exists (
+	select 1 
+    from emp e
+    where e.deptno = d.deptno
+)
+ order by d.deptno;
+
+explain format=tree
+select dname, deptno 
+from dept 
+where deptno not in (
+	select deptno from emp);
