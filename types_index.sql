@@ -112,3 +112,6 @@ SHOW PROFILES;
 SHOW PROFILE for query 10;
 
 set @@profiling = 0;
+
+
+SELECT TIME(':3');
